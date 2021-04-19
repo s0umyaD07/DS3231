@@ -45,7 +45,7 @@
         
         int main()
         {
-            //Read and display the current RTC module time and date
+            //Reading and displaying  current to  RTC module time and date
             int file;
             char buf[BUFFER_SIZE];
             //Open the i2c-1 bus
@@ -54,7 +54,7 @@
                 cout << "Failed to open bus\n";
                 return 1;
             }
-            //Connect to the sensor using address 0x68
+            //Connecting to the sensor using address 0x68
             if ((ioctl(file, I2C_SLAVE, 0x68)) < 0)
             {
                 cout << "Failed to connect to the sensor\n";
@@ -64,27 +64,27 @@
             //Initialize the read address
             if ((write(file, writeBuffer, 1)) != 1)
             {
-                cout << "Failed to reset the read address\n";
+                cout << "Failed to reset  read address\n";
                 return 1;
             }
             //Read the buffer
             if (read(file, buf, BUFFER_SIZE) != BUFFER_SIZE)
             {
-                cout << "Failed to read in the buffer\n";
+                cout << "Failed to read in  buffer\n";
                 return 1;
             }
-            /*Displays the current RTC Time in HH:MM:SS format
+            /* This Displays current RTC Time in HH:MM:SS format
             As the register stores the value in BCD format which is converted to decimal format to display */
             cout << "RTC Time in HH:MM:SS format is : " << binaryCDToDecimal(buf[2]) <<":"<< binaryCDToDecimal(buf[1]) << ":" << binaryCDToDecimal(buf[0]) << "\n";
             //Displays the current RTC Date in DD/MM/YY format
             cout << "RTC Date in DD/MM/YY format is : " << binaryCDToDecimal(buf[4]) <<"/"<< binaryCDToDecimal(buf[5]) << "/" << binaryCDToDecimal(buf[6]) << "\n";
 
-            /*Read and display the current temperature - Temperature is read by the above read command
+            /*Read and display  current temperature
             Displays the RTC Temperature in °C*/
             float temperature = buf[17] + ((buf[18]>>6)*0.25);//As a last 2 bit of the MSB is the decimal value, it is shifted right by 6 times and multiplied by 0.25 for resolution
             cout << "Temperature is " << temperature <<"°C\n";
 
-            //Set the current time and date on the RTC module.
+            //Setting the current time & date to the RTC module.
             int writeSeconds = 25, writeMinutes = 59, writeHours = 15, writeDate = 04, writeMonth = 03, writeYear = 21;
             unsigned char buffer[2];
             //Set seconds
@@ -92,32 +92,32 @@
             buffer[1] = decimalToBinaryCD(writeSeconds);//To write into register, the decimal value is converted into BCD format
             write(file, buffer, 2);//For writing, the RTC requires address and the value to be written into address
 
-            //Set minutes
+            //Setting minutes
             buffer[0] = DS3231_MINUTES;
             buffer[1] = decimalToBinaryCD(writeMinutes) ;
             write(file, buffer, 2);
 
-            //Set hours which is in 24 hour format
+            //Setting hours 24 hour format
             buffer[0] = DS3231_HOURS;
             buffer[1] = decimalToBinaryCD(writeHours) ;
             write(file, buffer, 2);
 
-            //Set date
+            //Setting date
             buffer[0] = DS3231_DATE;
             buffer[1] = decimalToBinaryCD(writeDate) ;
             write(file, buffer, 2);
 
-            //Set Month
+            //Setting Month
             buffer[0] = DS3231_MONTH;
             buffer[1] = decimalToBinaryCD(writeMonth) ;
             write(file, buffer, 2);
 
-            //Set Year
+            //Setting Year
             buffer[0] = DS3231_YEAR;
             buffer[1] = decimalToBinaryCD(writeYear) ;
             write(file, buffer, 2);
 
-            //Set and read the two alarms
+            //Setting and read the two alarms
             //Alarm 1 is used to set the time on date
             int writeAlarmSeconds = 30, writeAlarmMinutes = 58, writeAlarmHours = 23, writeAlarmDate = 15;//(DT/DY) Flag is set as 0 to act as date
             //Set Seconds for ALarm 1
@@ -125,34 +125,34 @@
             buffer[1] = decimalToBinaryCD(writeAlarmSeconds) ;
             write(file, buffer, 2);
 
-            //Set Minutes for ALarm 1
+            //Setting Minutes for ALarm 1
             buffer[0] = DS3231_ALARM1_MINUTES;
             buffer[1] = decimalToBinaryCD(writeAlarmMinutes) ;
             write(file, buffer, 2);
 
-            //Set Hours for ALarm 1
+            //Setting Hours for ALarm 1
             buffer[0] = DS3231_ALARM1_HOURS;
             buffer[1] = decimalToBinaryCD(writeAlarmHours) ;
             write(file, buffer, 2);
 
-            //Set Date for ALarm 1
+            //Setting Date for ALarm 1
             buffer[0] = DS3231_ALARM1_DAY_DATE;
             buffer[1] = decimalToBinaryCD(writeAlarmDate) ;
             write(file, buffer, 2);
 
-            //Alarm 2 is used to set the time on day
+            //Alarm 2 is used for setting the time on day
             writeAlarmMinutes = 55, writeAlarmHours = 23, writeAlarmDate = 45;//(DT/DY) Flag is set as 1 to act as day
             //Set Minutes for ALarm 2
             buffer[0] = DS3231_ALARM2_MINUTES;
             buffer[1] = decimalToBinaryCD(writeAlarmMinutes) ;
             write(file, buffer, 2);
 
-            //Set Hours for ALarm 2
+            //Setting Hours for ALarm 2
             buffer[0] = DS3231_ALARM2_HOURS;
             buffer[1] = decimalToBinaryCD(writeAlarmHours) ;
             write(file, buffer, 2);
 
-            //Set Day for ALarm 2
+            //Setting Day for ALarm 2
             buffer[0] = DS3231_ALARM2_DAY_DATE;
             buffer[1] = decimalToBinaryCD(writeAlarmDate) ;
             write(file, buffer, 2);
@@ -174,7 +174,7 @@
             write(file, writeBuffer, 1);
             read(file, buf, BUFFER_SIZE);
             
-            //For Square Wave, the BBSQW pin set to 1 and INTCN Flag to 0
+            //For Square Wave we set BSQW pin is set to 1 and INTCN Flag to 0
             writeControl = 0x58;
             buffer[0] = DS3231_CONTROL;
             buffer[1] = writeControl;
