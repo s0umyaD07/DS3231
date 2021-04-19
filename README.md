@@ -32,13 +32,13 @@
         #define DS3231_TEMP_MSB 0x11
         #define DS3231_TEMP_LSB 0x12 
 
-        //Function to convert Binary Coded Decimal to Decimal
-        int bcdToDec(char b)
+        //Converting Binary Coded Decimal to Decimal
+        int binaryCDToDecimal(char b)
         {
             return (b/16*10) + (b%16);
         }
-        //Function to convert Decimal to Binary Coded Decimal
-        char decToBcd(int d)
+        //Converting Decimal to Binary Coded Decimal
+        char decimalToBinaryCD(int d)
         {
             return ((d/10 * 16) + (d % 10));
         }
@@ -75,9 +75,9 @@
             }
             /*Displays the current RTC Time in HH:MM:SS format
             As the register stores the value in BCD format which is converted to decimal format to display */
-            cout << "RTC Time in HH:MM:SS format is : " << bcdToDec(buf[2]) <<":"<< bcdToDec(buf[1]) << ":" << bcdToDec(buf[0]) << "\n";
+            cout << "RTC Time in HH:MM:SS format is : " << binaryCDToDecimal(buf[2]) <<":"<< binaryCDToDecimal(buf[1]) << ":" << binaryCDToDecimal(buf[0]) << "\n";
             //Displays the current RTC Date in DD/MM/YY format
-            cout << "RTC Date in DD/MM/YY format is : " << bcdToDec(buf[4]) <<"/"<< bcdToDec(buf[5]) << "/" << bcdToDec(buf[6]) << "\n";
+            cout << "RTC Date in DD/MM/YY format is : " << binaryCDToDecimal(buf[4]) <<"/"<< binaryCDToDecimal(buf[5]) << "/" << binaryCDToDecimal(buf[6]) << "\n";
 
             /*Read and display the current temperature - Temperature is read by the above read command
             Displays the RTC Temperature in °C*/
@@ -89,32 +89,32 @@
             unsigned char buffer[2];
             //Set seconds
             buffer[0] = DS3231_SECONDS;//Address where the value is written
-            buffer[1] = decToBcd(writeSeconds);//To write into register, the decimal value is converted into BCD format
+            buffer[1] = decimalToBinaryCD(writeSeconds);//To write into register, the decimal value is converted into BCD format
             write(file, buffer, 2);//For writing, the RTC requires address and the value to be written into address
 
             //Set minutes
             buffer[0] = DS3231_MINUTES;
-            buffer[1] = decToBcd(writeMinutes) ;
+            buffer[1] = decimalToBinaryCD(writeMinutes) ;
             write(file, buffer, 2);
 
             //Set hours which is in 24 hour format
             buffer[0] = DS3231_HOURS;
-            buffer[1] = decToBcd(writeHours) ;
+            buffer[1] = decimalToBinaryCD(writeHours) ;
             write(file, buffer, 2);
 
             //Set date
             buffer[0] = DS3231_DATE;
-            buffer[1] = decToBcd(writeDate) ;
+            buffer[1] = decimalToBinaryCD(writeDate) ;
             write(file, buffer, 2);
 
             //Set Month
             buffer[0] = DS3231_MONTH;
-            buffer[1] = decToBcd(writeMonth) ;
+            buffer[1] = decimalToBinaryCD(writeMonth) ;
             write(file, buffer, 2);
 
             //Set Year
             buffer[0] = DS3231_YEAR;
-            buffer[1] = decToBcd(writeYear) ;
+            buffer[1] = decimalToBinaryCD(writeYear) ;
             write(file, buffer, 2);
 
             //Set and read the two alarms
@@ -122,50 +122,50 @@
             int writeAlarmSeconds = 30, writeAlarmMinutes = 58, writeAlarmHours = 23, writeAlarmDate = 15;//(DT/DY) Flag is set as 0 to act as date
             //Set Seconds for ALarm 1
             buffer[0] = DS3231_ALARM1_SECONDS;
-            buffer[1] = decToBcd(writeAlarmSeconds) ;
+            buffer[1] = decimalToBinaryCD(writeAlarmSeconds) ;
             write(file, buffer, 2);
 
             //Set Minutes for ALarm 1
             buffer[0] = DS3231_ALARM1_MINUTES;
-            buffer[1] = decToBcd(writeAlarmMinutes) ;
+            buffer[1] = decimalToBinaryCD(writeAlarmMinutes) ;
             write(file, buffer, 2);
 
             //Set Hours for ALarm 1
             buffer[0] = DS3231_ALARM1_HOURS;
-            buffer[1] = decToBcd(writeAlarmHours) ;
+            buffer[1] = decimalToBinaryCD(writeAlarmHours) ;
             write(file, buffer, 2);
 
             //Set Date for ALarm 1
             buffer[0] = DS3231_ALARM1_DAY_DATE;
-            buffer[1] = decToBcd(writeAlarmDate) ;
+            buffer[1] = decimalToBinaryCD(writeAlarmDate) ;
             write(file, buffer, 2);
 
             //Alarm 2 is used to set the time on day
             writeAlarmMinutes = 55, writeAlarmHours = 23, writeAlarmDate = 45;//(DT/DY) Flag is set as 1 to act as day
             //Set Minutes for ALarm 2
             buffer[0] = DS3231_ALARM2_MINUTES;
-            buffer[1] = decToBcd(writeAlarmMinutes) ;
+            buffer[1] = decimalToBinaryCD(writeAlarmMinutes) ;
             write(file, buffer, 2);
 
             //Set Hours for ALarm 2
             buffer[0] = DS3231_ALARM2_HOURS;
-            buffer[1] = decToBcd(writeAlarmHours) ;
+            buffer[1] = decimalToBinaryCD(writeAlarmHours) ;
             write(file, buffer, 2);
 
             //Set Day for ALarm 2
             buffer[0] = DS3231_ALARM2_DAY_DATE;
-            buffer[1] = decToBcd(writeAlarmDate) ;
+            buffer[1] = decimalToBinaryCD(writeAlarmDate) ;
             write(file, buffer, 2);
             //Read and display the alarms
             write(file, writeBuffer, 1);//Initialze the buffer
             read(file, buf, BUFFER_SIZE);//Read the registers
 
             string weekDays[7]= {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};//Declare array to for day
-            int day = bcdToDec(buf[13]) % 10; //Get the unit digit of the decimal value to display day mentioned in array
+            int day = binaryCDToDecimal(buf[13]) % 10; //Get the unit digit of the decimal value to display day mentioned in array
             //Display Alarm 1 for date
-            cout << "RTC Alarm 1 for date " << bcdToDec(buf[10]) <<" is "<< bcdToDec(buf[9]) << ":" << bcdToDec(buf[8]) << ":" << bcdToDec(buf[7]) <<"\n";
+            cout << "RTC Alarm 1 for date " << binaryCDToDecimal(buf[10]) <<" is "<< binaryCDToDecimal(buf[9]) << ":" << binaryCDToDecimal(buf[8]) << ":" << binaryCDToDecimal(buf[7]) <<"\n";
             //Display Alarm 2 for day
-            cout << "RTC Alarm 2 for every "<< weekDays[day] << " is " << bcdToDec(buf[12]) << ":" << bcdToDec(buf[11]) <<"\n";
+            cout << "RTC Alarm 2 for every "<< weekDays[day] << " is " << binaryCDToDecimal(buf[12]) << ":" << binaryCDToDecimal(buf[11]) <<"\n";
 
             char writeControl = 0x1F;//A1IF is set to 1 is alarm register and timer register matches
             buffer[0] = DS3231_CONTROL;
